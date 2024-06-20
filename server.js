@@ -7,9 +7,6 @@ dotenv.config({ path: './config.env' });
 
 const app = require('./app');
 
-// console.log(app.get('env'));
-// console.log(process.env);
-
 const DB = process.env.DATABASE_STRING.replace(
   '<password>',
   process.env.DATABASE_PASSWORD,
@@ -23,10 +20,16 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log(`DataBase Connection Successfull!`);
+    console.log('Database Connection Successful!');
+  })
+  .catch((error) => {
+    console.error('Database Connection Error:', error);
   });
 
-
+// Remove all existing documents with the same name
+// Tour.deleteMany({ name: testTour.name })
+//   .then(() => {
+// Save the new tour after removing the old ones
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
