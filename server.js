@@ -1,7 +1,12 @@
 // eslint-disable-next-line
 const mongoose = require('mongoose');
-
 const dotenv = require('dotenv');
+
+process.on('uncaughtException', (err) => {
+  console.log('Unhandled Rejection! Shutting Down....');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
 
 dotenv.config({ path: './config.env' });
 const app = require('./app');
@@ -20,9 +25,6 @@ mongoose
   })
   .then(() => {
     console.log('Database Connection Successful!');
-  })
-  .catch((error) => {
-    console.error('Database Connection Error:', error);
   });
 
 // Remove all existing documents with the same name
@@ -31,6 +33,16 @@ mongoose
 // Save the new tour after removing the old ones
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
+
+process.on('unhandledRejection', (err) => {
+  console.log('Unhandled Rejection! Shutting Down....');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+// console.log(x);

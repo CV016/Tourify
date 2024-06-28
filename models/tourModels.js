@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
+
 const slug = require('slugify');
+
 const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
@@ -27,13 +29,13 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A tour must have difficulty'],
       enum: {
         values: ['easy', 'medium', 'difficult'],
-        message: 'Difficulty is either easy,medium or difficult',
+        message: 'Difficulty is either: easy,medium or difficult',
       },
     },
     ratingsAverage: {
       type: Number,
       default: 4,
-      min: [0, 'Ratings must be 0 or above'],
+      min: [1, 'Ratings must be 1 or above'],
       max: [5, 'Ratings must be 5 or below'],
     },
     ratingsQuantity: {
@@ -72,6 +74,7 @@ const tourSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now(),
+      select: false,
     },
     startDates: [Date],
     secretTour: {
@@ -91,13 +94,19 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 //Document MiddleWare : runs before .save() and .create() and .remove() only.
 tourSchema.pre('save', function (next) {
-  this.slug = slugify(this.name, { lower: true });
+  this.slug = slug(this.name, { lower: true });
   next();
 });
 
 //Query MiddleWare
-tourSchema.pre('/^find/', function (next) {
+tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  this.start = Date.now() * 1;
+  next();
+});
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
 
