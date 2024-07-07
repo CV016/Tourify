@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const slug = require('slugify');
 
 const validator = require('validator');
+const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -81,6 +82,37 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocations: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    // Creating an embedded Documents,
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: User,
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -92,6 +124,19 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
+});
+
+// tourSchema.pre('save', async function (next) {
+//   // console.log(this.guide);
+//   const guidePromises = this.guides.map(async (id) => await User.findById(id));
+//   const guide = await Promise.all(guidePromises);
+//   next();
+// });
+
 //Document MiddleWare : runs before .save() and .create() and .remove() only.
 tourSchema.pre('save', function (next) {
   this.slug = slug(this.name, { lower: true });
@@ -102,6 +147,14 @@ tourSchema.pre('save', function (next) {
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now() * 1;
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
   next();
 });
 
