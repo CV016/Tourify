@@ -83,7 +83,7 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    startLocations: {
+    startLocation: {
       type: {
         type: String,
         default: 'Point',
@@ -133,6 +133,7 @@ tourSchema.virtual('reviews', {
 
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocations: '2dsphere' });
 
 // tourSchema.pre('save', async function (next) {
 //   // console.log(this.guide);
