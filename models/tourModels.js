@@ -133,7 +133,7 @@ tourSchema.virtual('reviews', {
 
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
-tourSchema.index({ startLocations: '2dsphere' });
+tourSchema.index({ startLocation: '2dsphere' });
 
 // tourSchema.pre('save', async function (next) {
 //   // console.log(this.guide);
@@ -169,11 +169,11 @@ tourSchema.post(/^find/, function (docs, next) {
 });
 
 //Aggregation Middleware
-tourSchema.pre('aggregate', function (next) {
-  // console.log(this.pipeline());
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   // console.log(this.pipeline());
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 
