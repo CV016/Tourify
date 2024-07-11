@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const slug = require('slugify');
 
-const validator = require('validator');
+// const validator = require('validator');
 const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
@@ -111,7 +111,7 @@ const tourSchema = new mongoose.Schema(
     guides: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: User,
+        ref: 'User',
       },
     ],
   },
@@ -120,6 +120,10 @@ const tourSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
+
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
@@ -130,10 +134,6 @@ tourSchema.virtual('reviews', {
   foreignField: 'tour',
   localField: '_id',
 });
-
-tourSchema.index({ price: 1, ratingsAverage: -1 });
-tourSchema.index({ slug: 1 });
-tourSchema.index({ startLocation: '2dsphere' });
 
 // tourSchema.pre('save', async function (next) {
 //   // console.log(this.guide);

@@ -2,24 +2,6 @@
 const mongoose = require('mongoose');
 const Tour = require('./tourModels');
 
-// const formatDate = (date) => {
-//   const d = new Date(date);
-//   let day = d.getDate();
-//   let month = d.getMonth() + 1; // Months are zero-based
-//   const year = d.getFullYear();
-
-//   // Add leading zero to day and month if needed
-//   day = day < 10 ? '0' + day : day;
-//   month = month < 10 ? '0' + month : month;
-
-//   return `${day}/${month}/${year}`;
-// };
-
-// createdAt: {
-//   type: Date,
-//   default: formatDate(Date.now),
-// },
-
 const reviewSchema = new mongoose.Schema(
   {
     review: {
@@ -41,21 +23,17 @@ const reviewSchema = new mongoose.Schema(
       select: 'false',
     },
 
-    tour: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Tour',
-        required: [true, 'Review must belong to a Tour'],
-      },
-    ],
+    tour: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Tour',
+      required: [true, 'Review must belong to a Tour'],
+    },
 
-    user: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
-        required: [true, 'Review must belong to a user'],
-      },
-    ],
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Review must belong to a user'],
+    },
   },
 
   {
@@ -87,7 +65,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]);
-  console.log(stats);
+  // console.log(stats);
 
   if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourId, {
