@@ -32,37 +32,59 @@ const handleJWTInvalidSignature = (err) =>
 const handleExpiredToken = (err) =>
   new AppError('your token has expired please login again!', 401);
 
-const sendErrorDevelopment = (err, res) => {
+const sendErrorDevelopment = (err, req, res) => {
   // console.log('Send Error to Developement!', err.name);
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
-  });
-};
 
-const sendErrorProduction = (err, res) => {
-  // Trusted Error : Can be showed to the client
-
-  if (err.isOperational) {
+  if (req.originalUrl.startsWith('/api')) {
     res.status(err.statusCode).json({
       status: err.status,
+      error: err,
       message: err.message,
+      stack: err.stack,
+    });
+  } else {
+    res.status(err.statusCode).render('error', {
+      title: `${err.statusCode} || Something went wrong`,
+      msg: err.message,
+    });
+  }
+};
+
+const sendErrorProduction = (err, req, res) => {
+  // Trusted Error : Can be showed to the client
+  // Production Error from the API
+  if (req.originalUrl.startsWith('/api')) {
+    if (err.isOperational) {
+      return res.status(err.statusCode).render('error', {
+        title: 'Something went wrong!',
+        message: err.message,
+      });
+    }
+
+    return res.status(500).render('error', {
+      title: 'Something went wrong!',
+      message: 'Please try again later',
+      // message: err.message,
+      // message: 'This is block 2',
+    });
+  }
+  // Production error from the rendered website
+  if (err.isOperational) {
+    return res.status(err.statusCode).render('error', {
+      // title: 'Something went wrong!',
+      message: err.message,
+      // message: 'This is block 3',
     });
   }
 
   // Programming or unknown error we don't wanna leak info about to the user
-  else {
-    // logging the error
-    console.error('ERROR!', err);
 
-    // generating error message
-    res.status(500).json({
-      status: 'error',
-      message: 'Something went wrong!',
-    });
-  }
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong!',
+    msg: 'Please try again later',
+    // message: err.message,
+    // message: 'This is block 4',
+  });
 };
 
 module.exports = (err, req, res, next) => {
@@ -75,14 +97,21 @@ module.exports = (err, req, res, next) => {
 
   if (process.env.NODE_ENV === 'developement') {
     // console.log('we are in developement phase');
-    sendErrorDevelopment(err, res);
+    sendErrorDevelopment(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     // console.log('We are in production phase');
     let error = { ...err };
     // console.log('This is the error');
     // console.log('This is the name of the error', err.name);
     // console.log(error);
+    // console.log(err);
+    // console.log('This is the err message');
+    // console.log(err.message);
     error.message = err.message;
+    // console.log(error);
+    // console.log(process.env.NODE_ENV);
+    // console.log('this is the error msg');
+    // console.log(error.message);
 
     // console.log('This is a Cast Error Man');
 
@@ -93,6 +122,6 @@ module.exports = (err, req, res, next) => {
       error = handleJWTInvalidSignature(error);
     if (error.name === 'TokenExpiredError') error = handleExpiredToken(error);
 
-    sendErrorProduction(error, res);
+    sendErrorProduction(error, req, res);
   }
 };
