@@ -1,28 +1,59 @@
 const nodemailer = require('nodemailer');
+const pug = require('pug');
+const { convert } = require('html-to-text');
 
-const sendEmail = async (options) => {
-  // Creating a Transporter
+module.exports = class Email {
+  constructor(user, url) {
+    this.to = user.email;
+    this.name = user.name.split(' ')[0];
+    this.url = url;
+    this.from = `Chinmay Vashishth <${process.env.EMAIL_FROM}>`;
+  }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
+  newTransport() {
+    if (process.env.NODE_ENV === 'production') {
+      // Sendgrid for real Emails
 
-  // define the email options
-  const mailOptions = {
-    from: 'Chinmay Vashishth <chinmayvashishth001@gmail.com>',
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-  };
+      return 1;
+    }
 
-  //actually send the email
+    return nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+  }
 
-  await transporter.sendMail(mailOptions);
+  async send(template, subject) {
+    // render HTML out of a pug template
+    const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
+      firstName: this.firstName,
+      url: this.url,
+      subject,
+    });
+
+    const mailOptions = {
+      from: this.from,
+      to: this.to,
+      subject,
+      html,
+      text: convert(html),
+    };
+
+    await this.newTransport().sendMail(mailOptions);
+  }
+
+  async sendWelcome() {
+    await this.send('welcome', 'Welcome to Tourify!');
+  }
+
+  async sendPasswordReset() {
+    await this.send(
+      'resetPassword',
+      'Your password reset token. ( Validity : 10 mins )',
+    );
+  }
 };
-
-module.exports = sendEmail;

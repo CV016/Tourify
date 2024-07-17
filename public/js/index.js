@@ -33,10 +33,17 @@ if (userDataForm)
   userDataForm.addEventListener('submit', (e) => {
     // console.log('This is the settings form');
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
+    // const name = document.getElementById('name').value;
+    // const email = document.getElementById('email').value;
 
-    updateUser({ name, email }, 'data');
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    
+    console.log(form);
+
+    updateUser(form, 'data');
   });
 
 if (userPasswordForm)

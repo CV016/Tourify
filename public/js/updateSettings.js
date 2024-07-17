@@ -15,7 +15,7 @@ export const updateUser = async (data, type) => {
     });
 
     if (res.data.status === 'success') {
-      showAlert('success', `${type.toUpperCase()} Updated Successfully!`);
+      showAlert('success', `${type.toUpperCase()} Updated Successfully`);
     }
 
     // console.log('This is the response');

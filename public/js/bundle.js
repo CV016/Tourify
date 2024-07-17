@@ -6652,8 +6652,8 @@ var displayMapBox = exports.displayMapBox = function displayMapBox(locations) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiY3YwMTYiLCJhIjoiY2x5Zmxrc25tMDB0NTJsczIxZ2FtbXlncyJ9.ZGEExdqFuZoTykXmzQuh4A';
   var map = new mapboxgl.Map({
     container: 'map',
-    //   style: 'mapbox://styles/cv016/clyfm07ax00r201pf4p0lh8xa', Dark-Map
-    style: 'mapbox://styles/cv016/clyfm4prr00sn01nwfq229b2o' // Light-Map
+    style: 'mapbox://styles/cv016/clyoq9fpd001x01ph8t61er1t' //Dark-Map
+    // style: 'mapbox://styles/cv016/clyfm4prr00sn01nwfq229b2o', // Light-Map
     // scrollZoom: false,
   });
   var bounds = new mapboxgl.LngLatBounds();
@@ -12508,7 +12508,7 @@ var updateUser = exports.updateUser = /*#__PURE__*/function () {
         case 4:
           res = _context.sent;
           if (res.data.status === 'success') {
-            (0, _alerts.showAlert)('success', "".concat(type.toUpperCase(), " Updated Successfully!"));
+            (0, _alerts.showAlert)('success', "".concat(type.toUpperCase(), " Updated Successfully"));
           }
 
           // console.log('This is the response');
@@ -12692,12 +12692,15 @@ if (logOutButton) logOutButton.addEventListener('click', _login.logout);
 if (userDataForm) userDataForm.addEventListener('submit', function (e) {
   // console.log('This is the settings form');
   e.preventDefault();
-  var name = document.getElementById('name').value;
-  var email = document.getElementById('email').value;
-  (0, _updateSettings.updateUser)({
-    name: name,
-    email: email
-  }, 'data');
+  // const name = document.getElementById('name').value;
+  // const email = document.getElementById('email').value;
+
+  var form = new FormData();
+  form.append('name', document.getElementById('name').value);
+  form.append('email', document.getElementById('email').value);
+  form.append('photo', document.getElementById('photo').files[0]);
+  console.log(form);
+  (0, _updateSettings.updateUser)(form, 'data');
 });
 if (userPasswordForm) userPasswordForm.addEventListener('submit', /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
@@ -12757,7 +12760,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58961" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61476" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

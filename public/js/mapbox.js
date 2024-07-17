@@ -1,14 +1,12 @@
 /* eslint-disable */
 
-
-
 export const displayMapBox = (locations) => {
   mapboxgl.accessToken =
     'pk.eyJ1IjoiY3YwMTYiLCJhIjoiY2x5Zmxrc25tMDB0NTJsczIxZ2FtbXlncyJ9.ZGEExdqFuZoTykXmzQuh4A';
   const map = new mapboxgl.Map({
     container: 'map',
-    //   style: 'mapbox://styles/cv016/clyfm07ax00r201pf4p0lh8xa', Dark-Map
-    style: 'mapbox://styles/cv016/clyfm4prr00sn01nwfq229b2o', // Light-Map
+    style: 'mapbox://styles/cv016/clyoq9fpd001x01ph8t61er1t', //Dark-Map
+    // style: 'mapbox://styles/cv016/clyfm4prr00sn01nwfq229b2o', // Light-Map
     // scrollZoom: false,
   });
 
