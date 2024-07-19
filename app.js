@@ -14,6 +14,7 @@ const tourRouter = require('./routes/tourRouter');
 const userRouter = require('./routes/userRouter');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRouter');
+const bookingRouter = require('./routes/bookingRouter');
 
 const app = express();
 
@@ -26,25 +27,72 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // security http headers
 app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+  }),
+);
+
+// Further HELMET configuration for Security Policy (CSP)
+const scriptSrcUrls = [
+  'https://api.tiles.mapbox.com/',
+  'https://api.mapbox.com/',
+  'https://*.cloudflare.com',
+  'https://js.stripe.com/v3/',
+  'https://checkout.stripe.com',
+];
+const styleSrcUrls = [
+  'https://api.mapbox.com/',
+  'https://api.tiles.mapbox.com/',
+  'https://fonts.googleapis.com/',
+  'https://www.myfonts.com/fonts/radomir-tinkov/gilroy/*',
+  ' checkout.stripe.com',
+];
+const connectSrcUrls = [
+  'https://*.mapbox.com/',
+  'https://*.cloudflare.com',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:52191',
+  '*.stripe.com',
+];
+
+const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
+app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'", 'data:', 'blob:'],
-      baseUri: ["'self'"],
-      fontSrc: ["'self'", 'https:', 'data:'],
-      scriptSrc: ["'self'", 'https://*.cloudflare.com'],
-      scriptSrc: ["'self'", 'https://*.stripe.com'],
-      scriptSrc: ["'self'", 'http:', 'https://*.mapbox.com', 'data:'],
-      frameSrc: ["'self'", 'https://*.stripe.com'],
-      objectSrc: ["'none'"],
-      // styleSrc: ["'self'", 'https:', 'unsafe-inline'],
-      workerSrc: ['data:', 'blob:'],
-      childSrc: ["'self'", 'blob:'],
-      imgSrc: ["'self'", 'data:', 'blob:'],
-      connectSrc: ["'self'", 'blob:', 'https://*.mapbox.com'],
-      upgradeInsecureRequests: [],
+      defaultSrc: [],
+      connectSrc: ["'self'", ...connectSrcUrls],
+      scriptSrc: ["'self'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", 'blob:'],
+      objectSrc: [],
+      imgSrc: ["'self'", 'blob:', 'data:'],
+      fontSrc: ["'self'", ...fontSrcUrls],
+      frameSrc: ['*.stripe.com', '*.stripe.network'],
     },
   }),
 );
+
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'", 'data:', 'blob:'],
+//       baseUri: ["'self'"],
+//       fontSrc: ["'self'", 'https:', 'data:'],
+//       scriptSrc: ["'self'", 'https://*.cloudflare.com'],
+//       scriptSrc: ["'self'", 'https://*.stripe.com'],
+//       scriptSrc: ["'self'", 'http:', 'https://*.mapbox.com', 'data:'],
+//       frameSrc: ["'self'", 'https://*.stripe.com'],
+//       objectSrc: ["'none'"],
+//       // styleSrc: ["'self'", 'https:', 'unsafe-inline'],
+//       workerSrc: ['data:', 'blob:'],
+//       childSrc: ["'self'", 'blob:'],
+//       imgSrc: ["'self'", 'data:', 'blob:'],
+//       connectSrc: ["'self'", 'blob:', 'https://*.mapbox.com'],
+//       upgradeInsecureRequests: [],
+//     },
+//   }),
+// );
 
 // app.use(helmet());
 // app.use(
@@ -113,6 +161,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
