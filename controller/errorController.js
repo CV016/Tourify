@@ -53,6 +53,10 @@ const sendErrorDevelopment = (err, req, res) => {
 const sendErrorProduction = (err, req, res) => {
   // Trusted Error : Can be showed to the client
   // Production Error from the API
+  // console.log('Here is the error!');
+  console.log('Hello');
+  console.log(err);
+  console.log(process.env.SENDINBLUE_PORT);
   if (req.originalUrl.startsWith('/api')) {
     if (err.isOperational) {
       return res.status(err.statusCode).render('error', {
@@ -63,11 +67,13 @@ const sendErrorProduction = (err, req, res) => {
 
     return res.status(500).render('error', {
       title: 'Something went wrong!',
-      message: 'Please try again later',
-      // message: err.message,
+      // title: err.message,
+      // message: 'Please try again later',
+      message: err.message,
       // message: 'This is block 2',
     });
   }
+
   // Production error from the rendered website
   if (err.isOperational) {
     return res.status(err.statusCode).render('error', {

@@ -29,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
+    // contentSecurityPolicy: false,
   }),
 );
 
@@ -47,10 +48,14 @@ const styleSrcUrls = [
   'https://www.myfonts.com/fonts/radomir-tinkov/gilroy/*',
   ' checkout.stripe.com',
 ];
+
+// 'https://*.tiles.mapbox.com',
+// 'https://api.mapbox.com',
+// 'https://events.mapbox.com',
 const connectSrcUrls = [
   'https://*.mapbox.com/',
   'https://*.cloudflare.com',
-  'http://127.0.0.1:3000',
+  'https://127.0.0.1:3000',
   'http://127.0.0.1:52191',
   '*.stripe.com',
 ];
@@ -70,6 +75,7 @@ app.use(
       fontSrc: ["'self'", ...fontSrcUrls],
       frameSrc: ['*.stripe.com', '*.stripe.network'],
     },
+    // reportOnly: true,
   }),
 );
 

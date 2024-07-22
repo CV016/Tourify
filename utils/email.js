@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const pug = require('pug');
 const { convert } = require('html-to-text');
+const Transport = require('nodemailer-brevo-transport');
 
 module.exports = class Email {
   constructor(user, url) {
@@ -14,7 +15,15 @@ module.exports = class Email {
     if (process.env.NODE_ENV === 'production') {
       // Sendgrid for real Emails
 
-      return 1;
+      return nodemailer.createTransport({
+        // service: 'Brevo',
+        host: process.env.BREVO_HOST,
+        port: process.env.BREVO_PORT,
+        auth: {
+          user: process.env.BREVO_LOGIN,
+          pass: process.env.BREVO_PASSWORD,
+        },
+      });
     }
 
     return nodemailer.createTransport({

@@ -13,6 +13,12 @@ const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const bookBtn = document.getElementById('book-tour');
 
+console.log('Hello');
+
+// bookBtn.addEventListener('click', (e) => {
+//   console.log('HEllo');
+// });
+
 if (mapBox) {
   const locations = JSON.parse(mapBox.dataset.locations);
   displayMapBox(locations);
@@ -71,6 +77,7 @@ if (userPasswordForm)
 
 if (bookBtn)
   bookBtn.addEventListener('click', (e) => {
+    console.log('clicked');
     e.target.textContent = 'Processing...';
     const { tourId } = e.target.dataset;
     bookTour(tourId);
