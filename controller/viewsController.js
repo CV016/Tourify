@@ -2,6 +2,7 @@ const Tour = require('../models/tourModels');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const Booking = require('../models/bookingModel');
 // const User = require('../models/userModel');
 // const userController = require('../controller/userController');
 
@@ -32,17 +33,16 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // Build Template
 
   //Render template
-  res
-    .status(200)
-    .set(
-      'Content-Security-Policy',
-      'connect-src https://*.tiles.mapbox.com https://api.mapbox.com https://events.mapbox.com',
-    )
-    .render('tour', {
-      title: `${tour.name} Tour`,
-      tour,
-    });
+  res.status(200).render('tour', {
+    title: `${tour.name} Tour`,
+    tour,
+  });
 });
+
+// .set(
+//   'Content-Security-Policy',
+//   'connect-src https://*.tiles.mapbox.com https://api.mapbox.com https://events.mapbox.com',
+// )
 
 exports.getLoginForm = catchAsync(async (req, res, next) => {
   //   const user = User.findOne();
@@ -58,8 +58,23 @@ exports.getAccount = (req, res) => {
   });
 };
 
+exports.getMyTours = catchAsync(async (req, res, next) => {
+  // Current bookings for the current user
+
+  const bookings = await Booking.find({ user: req.user.id });
+
+  // Find tours with the return Id
+
+  const tourId = bookings.map((el) => el.tour);
+  const tours = await Tour.find({ _id: { $in: tourId } });
+
+  res.status(200).render('overview', {
+    title: 'My Tours',
+    tours,
+  });
+});
+
 exports.updateUserData = catchAsync(async (req, res, next) => {
-  // console.log(req);
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,
     {

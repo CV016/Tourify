@@ -35,6 +35,8 @@ const handleExpiredToken = (err) =>
 const sendErrorDevelopment = (err, req, res) => {
   // console.log('Send Error to Developement!', err.name);
 
+  console.log(err.message);
+
   if (req.originalUrl.startsWith('/api')) {
     res.status(err.statusCode).json({
       status: err.status,
