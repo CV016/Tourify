@@ -79,6 +79,9 @@ if (bookBtn)
   bookBtn.addEventListener('click', (e) => {
     console.log('clicked');
     e.target.textContent = 'Processing...';
+    console.log('this is before tour Id');
     const { tourId } = e.target.dataset;
+    console.log('this is the tour Id');
+    console.log(tourId);
     bookTour(tourId);
   });
