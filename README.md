@@ -4,6 +4,8 @@ This full stack web application is specially designed for persons who love trave
 The documentation of the API for this app can be found at [https://documenter.getpostman.com/view/13036021/TWDfEZ3P](https://documenter.getpostman.com/view/35969455/2sA3kUH34k)
 The API and the app itself are hosted on the same server.
 
+This project will be deployed in near future and the link will be available here instead of this text.
+
 ## Overview
 
 This web application allows it's users to book tour vacations.
@@ -120,3 +122,6 @@ If you wish to play around with the code base in your local environment, do the 
 - A regular user can remove a tour from their list of favorite tours.
 - A regular user can not add a tour to their list of favorite tours, when it is already a favorite.
 
+## Notice
+- If you find any bug or problem in the app please free feel to raise the issue
+- Improvements Ideas in the project will be highly appreciated
